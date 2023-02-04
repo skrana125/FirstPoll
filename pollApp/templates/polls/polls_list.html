@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row " >
+        <div class="col-md-8 offset-sm-2 shadow p-3 mb-5 bg-body rounded">
+            <p><spen class="fw-bolder">Name  </spen>{{request.user.first_name}} {{request.user.last_name}}</p>
+            <p><spen class="fw-bolder">Email </spen>{{request.user.email}}</p>
+            <hr/>
+            <h4>Your Polls</h4>
+            <hr/>
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <a class="btn btn-primary mb-3 float-end" href="{% url 'polls:add' %}" role="button">Create Poll <i class="fas fa-plus"></i></a>
+
+            <ul class="list-group">
+                {% for poll in polls %}
+                <li class="list-group-item"><a href="{% url 'polls:detail' poll.id %}">{{ poll.text|truncatewords:5 }}
+                        {% if not poll.active%}
+                        <i class="fas fa-check-circle ml-2"></i>
+                        {% endif %}
+                    </a>
+                    {% if request.user == poll.owner %}
+                    {% if poll.active %}
+                    <a href="{% url 'polls:end_poll' poll.id %}" data-toggle="tooltip" data-placement="top" title="End Poll"
+                        onclick="return confirm('Are you sure ?')"><i class="fas fa-step-forward float-right btn btn-danger btn-sm"></i></a>
+                    {% endif %}
+                    <a href="{% url 'polls:edit' poll.id %}" class="mr-3" data-toggle="tooltip" data-placement="top"
+                        title="Edit Poll"><i class="fas fa-pencil-alt float-right btn btn-primary btn-sm mr-1"></i></a>
+                    {% endif %}
+                </li>
+
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
